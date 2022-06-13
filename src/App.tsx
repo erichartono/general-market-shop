@@ -138,19 +138,44 @@ function ProductRow(props: ProductRowProps) {
   )
 }
 
-const PRODUCTS = [
-  {category: "Fruits", price: "$1", stocked: true, name: "Apple"},
-  {category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit"},
-  {category: "Fruits", price: "$2", stocked: false, name: "Passionfruit"},
-  {category: "Vegetables", price: "$2", stocked: true, name: "Spinach"},
-  {category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin"},
-  {category: "Vegetables", price: "$1", stocked: true, name: "Peas"}
-];
+const PRODUCTS: Product[] = [];
 
-function App() {
-  return (
-    <FilterableProductTable products={PRODUCTS} />
-  )
+class App extends React.Component<{}, {items: Product[], isLoaded: boolean}> {
+   
+  // Constructor 
+  constructor(props: any) {
+    super(props);
+
+    this.state = {
+        items: PRODUCTS,
+        isLoaded: false
+    };
+  }
+ 
+  // ComponentDidMount is used to
+  // execute the code 
+  componentDidMount() {
+    fetch(
+      "https://a3e98937-28da-4054-88f2-f87b79ec18b3.mock.pstmn.io")
+      .then((res) => res.json())
+      .then((json) => {
+        console.log(json);
+          this.setState({
+              items: json,
+              isLoaded: true
+          });
+      }
+    )
+  }
+  
+  render() {
+    const { isLoaded, items } = this.state;
+    if (!isLoaded) return <div>
+        <h1> Please wait some time.... </h1> </div> ;
+    return (
+      <FilterableProductTable products={items} />
+    );
+  }
 }
 
 export default App;
